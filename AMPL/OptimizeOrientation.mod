@@ -1,5 +1,5 @@
 #PARAMETERS AND SETS
-set FACETS = 1..12; #the set of triangular facets the shape has
+set FACETS = 1..2; #the set of triangular facets the shape has
 param area{FACETS}; # each facet has an assigned area
 param normalX{FACETS}; # the x component of the facet's normal
 param normalY{FACETS}; # the y component of the facet's normal
@@ -29,16 +29,26 @@ var Z_down{FACETS} binary;
 #also, I think with the way it is now, it will say that you need support material for the bottom of the part that is actually touching the printer surface
 minimize totalsupportArea: sum{f in FACETS}(area[f]*inCone[f]);
 
-#subject to checkX_up {f in FACETS}: #check if normalX[f] is below upper range of cX, if yes, set X_up[f] = 1
-#subject to checkX_down {f in FACETS}:#check if normalX[f] is above lower range of cX, if yes, set X_down[f] = 1
+#cone is a unit vector
+#subject to unitCone: sqrt(cX*cX + cY*cY + cZ*cZ)=1;
+#subject to unitCone: sqrt(cX)=1;
+
+subject to checkX_up {f in FACETS}: 2*X_up[f] -cX + normalX[f] - coneOfShameWindow>=0;
+ #check if normalX[f] is below upper range of cX, if yes, set X_up[f] = 1
+subject to checkX_down {f in FACETS}: -2*X_down[f] -cX + normalX[f] + coneOfShameWindow<=0;
+#check if normalX[f] is above lower range of cX, if yes, set X_down[f] = 1
 subject to withinX {f in FACETS}: X_up[f] + X_down[f] <= 1+X_helper[f];
 
-#subject to checkY_up {f in FACETS}: #check if normalY[f] is below upper range of cY, if yes, set Y_up[f] = 1
-#subject to checkY_down {f in FACETS}:#check if normalY[f] is above lower range of cY, if yes, set Y_down[f] = 1
+subject to checkY_up {f in FACETS}: 2*Y_up[f] -cX + normalY[f] - coneOfShameWindow>=0;
+ #check if normalY[f] is below upper range of cY, if yes, set Y_up[f] = 1
+subject to checkY_down {f in FACETS}: -2*Y_down[f] -cX + normalY[f] + coneOfShameWindow<=0;
+#check if normalY[f] is above lower range of cY, if yes, set Y_down[f] = 1
 subject to withinY{f in FACETS}: Y_up[f]+Y_down[f] <= 1+ Y_helper[f];
 
-#subject to checkZ_up {f in FACETS}: #check if normalZ[f] is below upper range of cZ, if yes, set Z_up[f] = 1
-#subject to checkZ_down {f in FACETS}:#check if normalZ[f] is above lower range of cZ, if yes, set Z_down[f] = 1
+subject to checkZ_up {f in FACETS}: 2*Z_up[f] -cX + normalZ[f] -  coneOfShameWindow>=0;
+ #check if normalZ[f] is below upper range of cZ, if yes, set Z_up[f] = 1
+subject to checkZ_down {f in FACETS}: -2*Z_down[f] -cX + normalZ[f] +  coneOfShameWindow <=0;
+#check if normalZ[f] is above lower range of cZ, if yes, set Z_down[f] = 1
 subject to withinZ{f in FACETS}: Z_up[f]+Z_down[f] <= 1+ Z_helper[f];
 
 #if below upper range and above lower range, set inCone[f] = 1
