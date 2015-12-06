@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from ClassFormat import *
 from normals import *
+from amplWriter import *
 
 def parse_materials(root):
     materials = {}
@@ -48,8 +49,8 @@ def main():
     filename = input("Enter AMF File : ")
     root = read_amf(filename)
     faces = parse_faces(root)
-    get_and_separate_norms(faces)
-    
+    #get_and_separate_norms(faces)
+    write_ampl(faces_to_normals(faces))
     
 if __name__ == '__main__':
     main()
