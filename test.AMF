@@ -15,7 +15,6 @@
         <metadata type="name">Hard side</metadata> 
         <triangle><v1>2</v1><v2>1</v2><v3>0</v3></triangle>
         <triangle><v1>0</v1><v2>1</v2><v3>4</v3></triangle>
-        <triangle><v1>4</v1><v2>1</v2><v3>2</v3></triangle>
         <triangle><v1>0</v1><v2>4</v2><v3>2</v3></triangle>
       </volume>
       <volume materialid="3">
@@ -23,7 +22,6 @@
         <triangle><v1>2</v1><v2>3</v2><v3>1</v3></triangle>
         <triangle><v1>1</v1><v2>3</v2><v3>4</v3></triangle>
         <triangle><v1>4</v1><v2>3</v2><v3>2</v3></triangle>
-        <triangle><v1>4</v1><v2>2</v2><v3>1</v3></triangle>
       </volume>
     </mesh>
   </object>

@@ -1,6 +1,7 @@
 from ClassFormat import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
+import numpy as np
 
 def faces_to_normals(faces):
     normals = []
@@ -16,17 +17,21 @@ def faces_to_normals(faces):
 
 def get_and_separate_norms(faces):
     normals = faces_to_normals(faces)
-    print "There are {} normals.".format(len(normals))
-    for n in normals:
-        print n
-    start = [0] * len(normals)
-    
-    xs = [(n.x * n.area) for n in normals]
-    ys = [(n.y * n.area) for n in normals]
-    zs = [(n.z * n.area) for n in normals]
     
     fig = plt.figure()
-    ax = fig.gca(projection = '3d')
-    ax.quiver(start, start, start, xs, ys, zs, length=.1)
-    plt.show()
+    ax = fig.add_subplot(111, projection='3d')
+    for n in normals:
+        x = n.x * n.area
+        y = n.y * n.area
+        z = n.z * n.area
+        ax.quiver(0,0,0,x,y,z, pivot='tail')
+        
+    ax.set_title("Weighted Normals Graph")
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-1,1)
+    ax.set_zlim(-1,1)
+    ax.set_xlabel('X-Axis')
+    ax.set_ylabel('Y-Axis')
+    ax.set_zlabel('Z-Axis')
     
+    plt.show()
