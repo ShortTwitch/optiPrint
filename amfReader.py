@@ -1,7 +1,8 @@
 import xml.etree.ElementTree as ET
 from ClassFormat import *
+from normals import *
 
-def parseMaterials(root):
+def parse_materials(root):
     materials = {}
     for material in root.findall('material'):
         name = material.find('metadata').text
@@ -13,7 +14,7 @@ def parseMaterials(root):
         }
     return materials
 
-def parseVertices(root):
+def parse_vertices(root):
     vertices = {}
     for i, vertex in enumerate(root.iter('vertex')):
         cds = vertex.find('coordinates')
@@ -22,10 +23,10 @@ def parseVertices(root):
         vertices[i] = v
     return vertices
 
-def parseFaces(root):
+def parse_faces(root):
     faces = []
-    vertices = parseVertices(root)
-    materials = parseMaterials(root)
+    vertices = parse_vertices(root)
+    materials = parse_materials(root)
     for volume in root.iter('volume'):
         mid = volume.get('materialid') #Use to identify color later
         for face in volume.findall('triangle'):
@@ -37,7 +38,7 @@ def parseFaces(root):
             faces.append(f)
     return faces
 
-def readAMF(filename):
+def read_amf(filename):
     tree = None
     with open(filename) as f:
         tree = ET.parse(f)
@@ -45,10 +46,9 @@ def readAMF(filename):
     
 def main():
     filename = input("Enter AMF File : ")
-    root = readAMF(filename)
-    faces = parseFaces(root)
-    for f in faces:
-        print f
+    root = read_amf(filename)
+    faces = parse_faces(root)
+    get_and_separate_norms(faces)
     
     
 if __name__ == '__main__':
