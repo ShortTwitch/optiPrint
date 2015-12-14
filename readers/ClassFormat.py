@@ -56,3 +56,14 @@ class Normal(object):
     def __str__(self):
         return "({},{},{}). Area : {}".format(self.x, self.y, self.z, self.area)
         
+def faces_to_normals(faces):
+    normals = []
+    for face in faces:
+        # Perform dot product (or is it cross product?)
+        u = face.v2 - face.v1
+        v = face.v3 - face.v1
+        nx = (u.y * v.z) - (u.z * v.y)
+        ny = (u.z * v.x) - (u.x * v.z)
+        nz = (u.x * v.y) - (u.y * v.x)
+        normals.append(Normal(nx, ny, nz, face.area()))
+    return normals

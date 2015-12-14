@@ -1,9 +1,8 @@
 import xml.etree.ElementTree as ET
-from ClassFormat import *
-from normals import *
-from amplWriter import *
+from xml.etree.ElementTree import ParseError
+import ClassFormat as CF
 
-def parse_materials(root):
+def _parse_materials(root):
     materials = {}
     for material in root.findall('material'):
         name = material.find('metadata').text
@@ -15,42 +14,42 @@ def parse_materials(root):
         }
     return materials
 
-def parse_vertices(root):
+def _parse_vertices(root):
     vertices = {}
     for i, vertex in enumerate(root.iter('vertex')):
         cds = vertex.find('coordinates')
         x,y,z = cds.find('x').text, cds.find('y').text, cds.find('z').text
-        v = Vertex(x, y, z)
+        v = CF.Vertex(x, y, z)
         vertices[i] = v
     return vertices
 
-def parse_faces(root):
+def _parse_faces(root):
     faces = []
-    vertices = parse_vertices(root)
-    materials = parse_materials(root)
+    vertices = _parse_vertices(root)
+    materials = _parse_materials(root)
     for volume in root.iter('volume'):
         mid = volume.get('materialid') #Use to identify color later
         for face in volume.findall('triangle'):
             v1 = int(face.find('v1').text)
             v2 = int(face.find('v2').text)
             v3 = int(face.find('v3').text)
-            m = materials[mid]
-            f = Face(vertices[v1], vertices[v2], vertices[v3], m)
+            m = 0
+            if mid in materials:
+                m = materials[mid]
+            f = CF.Face(vertices[v1], vertices[v2], vertices[v3], m)
             faces.append(f)
     return faces
 
 def read_amf(filename):
-    tree = None
-    with open(filename) as f:
-        tree = ET.parse(f)
-    return tree.getroot()    
-    
-def main():
-    filename = input("Enter AMF File : ")
-    root = read_amf(filename)
-    faces = parse_faces(root)
-    #get_and_separate_norms(faces)
-    write_ampl(faces_to_normals(faces))
-    
-if __name__ == '__main__':
-    main()
+    faces = None
+    normals = None
+    with open("amf/" + filename) as f:
+        try:
+            tree = ET.parse(f)
+            root = tree.getroot()
+            faces = _parse_faces(root)
+            normals = CF.faces_to_normals(faces)
+        except ParseError:
+            print("Error trying to parse .amf file : amf/{}".format(filename))
+            print("Check if file exists and try again")
+    return faces, normals

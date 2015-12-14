@@ -1,37 +1,37 @@
 #PARAMETERS AND SETS
-set FACETS = 1..2; #the set of triangular facets the shape has
-param area{FACETS}; # each facet has an assigned area
-param normalX{FACETS}; # the x component of the facet's normal
-param normalY{FACETS}; # the y component of the facet's normal
-param normalZ{FACETS}; # the z component of the facet's normal
+set FACETS = 1..12; #the set of triangular facets the shape has
+param area {FACETS}; # each facet has an assigned area
+param normalX {FACETS}; # the x component of the facet's normal
+param normalY {FACETS}; # the y component of the facet's normal
+param normalZ {FACETS}; # the z component of the facet's normal
+
+var inCone {FACETS} binary; # 1 if facet is in cone of shame, 0 otherwise
+
+var X_helper {FACETS} binary; #1 if x component of facet normal is within x range
+var X_up {FACETS} binary; # 1 if x comp is below upper range
+var X_down {FACETS} binary; #1 if x comp is above lower range
+
+var Y_helper {FACETS} binary; #1 if y component of facet normal is within y range
+var Y_up {FACETS} binary; 
+var Y_down {FACETS} binary;
+
+var Z_helper {FACETS} binary; #1 if z component of facet normal is within z range
+var Z_up {FACETS} binary; 
+var Z_down {FACETS} binary;
 
 param coneOfShameWindow;
 
 #Decision Variables
-var cX>=-1, <=1; #cone of shame X component
+var cX >=-1, <=1; #cone of shame X component
 var cY >=-1, <=1; #cone of shame Y component
-var cZ>=-1, <=1; # cone of shame Z component
-var inCone{FACETS} binary; # 1 if facet is in cone of shame, 0 otherwise
-
-var X_helper{FACETS} binary; #1 if x component of facet normal is within x range
-var X_up{FACETS} binary; # 1 if x comp is below upper range
-var X_down{FACETS} binary; #1 if x comp is above lower range
-
-var Y_helper{FACETS} binary; #1 if y component of facet normal is within y range
-var Y_up{FACETS} binary; 
-var Y_down{FACETS} binary;
-
-var Z_helper{FACETS} binary; #1 if z component of facet normal is within z range
-var Z_up{FACETS} binary; 
-var Z_down{FACETS} binary;
+var cZ >=-1, <=1; # cone of shame Z component
 
 #doesn't support material not only have to do with area, but also the height off the base of the model?
 #also, I think with the way it is now, it will say that you need support material for the bottom of the part that is actually touching the printer surface
 minimize totalsupportArea: sum{f in FACETS}(area[f]*inCone[f]);
 
 #cone is a unit vector
-#subject to unitCone: sqrt(cX*cX + cY*cY + cZ*cZ)=1;
-#subject to unitCone: sqrt(cX)=1;
+subject to unitCone: cX*cX + cY*cY + cZ*cZ=1;
 
 subject to checkX_up {f in FACETS}: 2*X_up[f] -cX + normalX[f] - coneOfShameWindow>=0;
  #check if normalX[f] is below upper range of cX, if yes, set X_up[f] = 1
