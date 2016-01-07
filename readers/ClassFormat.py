@@ -55,6 +55,16 @@ class Normal(object):
         
     def __str__(self):
         return "({},{},{}). Area : {}".format(self.x, self.y, self.z, self.area)
+
+class PolarNorm(object):
+
+    def __init__(self, theta, phi, area):
+        self.theta = theta
+        self.phi = phi
+        self.area = area
+
+    def __str__(self):
+        return "({},{}). Area : {}".format(self.theta, self.phi, self.area)
         
 def faces_to_normals(faces):
     normals = []
