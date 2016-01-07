@@ -25,21 +25,39 @@ def write_ampl(filename, normals):
             f.write(line)
         f.write("\nparam coneOfShameWindow := 0.707")
 
-def normal_to_polarNorm(normal):
-    x,y,z = normal.x, normal.y, normal.z
-    phi = atan((sqrt(x^2+y^2))/z)
-    theta = atan(y/x)
+def normal_to_polarNorms(normal):
+    pn1, pn2, pn3 = None, None, None
+    x, y, z, area = normal.x, normal.y, normal.z, normal.area
+    theta = phi = 0
+    
+    if z != 0:
+        phi = atan((sqrt(x**2+y**2))/z)
+    if x != 0:
+        theta = atan(y/x)
+    pn1 = CF.PolarNorm(phi, theta, area)
+        
     if phi < pi/4 or theta < pi/4:
-        phi = phi+2*pi
-        theta = theta+2*pi
+        phi2 = phi+2*pi
+        theta2 = theta+2*pi
+        pn2 = CF.PolarNorm(phi2, theta2, area)
+    
     if phi> 2*pi - pi/4 or theta > 2*pi - pi/4:
-        phi = phi-2*pi
-        theta = theta-2*pi
-    return CF.PolarNorm(phi, theta, normal.area)
+        phi3 = phi-2*pi
+        theta3 = theta-2*pi
+        pn3 = CF.PolarNorm(phi3, theta3, area)
+        
+    return pn1, pn2, pn3
 
 def cartesian_to_polar_writer(filename, normals):
     filename = "out/" + filename + ".ampl"
-    polarNorms = [convert_to_polarNorm(n) for n in normals]
+    
+    polarNorms = []
+    for normal in normals:
+        pns = normal_to_polarNorms(normal)
+        for pn in pns:
+            if pn:
+                polarNorms.append(pn)
+        
     with open(filename, 'w') as f:
         f.write("param: thetaFace phiFace area:=\n")
         for i, n in enumerate(polarNorms):
@@ -48,7 +66,6 @@ def cartesian_to_polar_writer(filename, normals):
         f.write("\nparam coneOfShameWindow := 0.785398")
 
 if args.amf:
-    print args.filename
     faces, normals = AMFReader.read_amf(args.filename)
     if faces and normals:
         cartesian_to_polar_writer(args.filename, normals)

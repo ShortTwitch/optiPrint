@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 import numpy as np
 from numpy import random, cos, sin, sqrt, pi
+from math import pi, sin, cos, atan
 
 class Sphere(object):
     
@@ -15,7 +16,8 @@ class Sphere(object):
         
     def addNormal(self, n):
         self.normals.append(n)
-        self.areasum += n.area
+        if not(n.x == self.x and n.y == self.y and n.z == self.z):
+            self.areasum += n.area
 
 def create_sphere(xCenter, yCenter, zCenter, r):
     #draw sphere
@@ -29,53 +31,37 @@ def create_sphere(xCenter, yCenter, zCenter, r):
     z = r*z + zCenter
     return (x,y,z)
 
-def rand_sphere(n):
-  """n points distributed evenly on the surface of a unit sphere""" 
-  z = 2 * random.rand(n) - 1   # uniform in -1, 1
-  t = 2 * pi * random.rand(n)   # uniform in 0, 2*pi
-  x = sqrt(1 - z**2) * cos(t)
-  y = sqrt(1 - z**2) * sin(t)
-  return x, y, z
+def rand_sphere(n, start_theta, end_theta, start_phi, end_phi):
+    """n points distributed evenly on the surface of a unit sphere"""
+    
+    theta_diff = end_theta - start_theta
+    theta = (random.rand(n) * theta_diff) + start_theta
+    
+    phi_diff = end_phi - start_phi
+    phi = (random.rand(n) * phi_diff) + start_phi
+    
+    r = 1
+    
+    return polar_to_cartesian(r, theta, phi)
 
-def separate_norms(normals, count=100, displayNorms = True, displayCones = False):    
+def polar_to_cartesian(rs, thetas, phis):
+    xs = rs * np.sin(phis) * np.cos(thetas)
+    ys = rs * np.sin(phis) * np.sin(thetas)
+    zs = rs * np.cos(phis)
+    return xs, ys, zs
+
+def cartesian_to_polar(x, y, z):
+    theta = atan(sqrt(x**2 + y**2) / z)
+    phi = atan(y/z)
+    return theta, phi
+
+def graph_circles(circles, best):
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')    
-    
-    xs, ys, zs = rand_sphere(count)
-
-    circles = []
-    for i in range(count):
-        x, y, z = xs[i], ys[i], zs[i]
-        circles.append( Sphere(x, y, z, .707) )
-    
+    ax = fig.add_subplot(111, projection='3d')
     for circle in circles:
-        for normal in normals:
-            cx = circle.x
-            cy = circle.y
-            cz = circle.z
-            if cx + .707 > normal.x and cx - .707 < normal.x:
-                if cy + .707 > normal.y and cy - .707 < normal.y:
-                    if cz + .707 > normal.z and cz - .707 < normal.z:
-                        circle.addNormal(normal)
-    circles = sorted(circles, key = lambda x : x.areasum, reverse=False)
-    answer = circles[0]
+        ax.scatter(circle.x, circle.y, circle.z, color="blue")
+    ax.scatter(best.x, best.y, best.z, color="red")
     
-    if displayCones:
-        for circle in circles:
-            (x, y, z) = create_sphere(circle.x, circle.y, circle.z, .707)
-            ax.plot_wireframe(x, y, z, alpha = .2, color="blue")
-
-    
-    (x, y, z) = create_sphere(answer.x, answer.y, answer.z, .707)
-    ax.plot_wireframe(x, y, z, alpha = .2, color="black")
-    
-    if displayNorms:
-        for n in normals:
-            x = n.x #* n.area
-            y = n.y #* n.area
-            z = n.z #* n.area
-            ax.scatter(x,y,z, c="r")
-        
     ax.set_title("Weighted Normals Graph")
     ax.set_xlim(-1, 1)
     ax.set_ylim(-1,1)
@@ -85,3 +71,45 @@ def separate_norms(normals, count=100, displayNorms = True, displayCones = False
     ax.set_zlabel('Z-Axis')
     
     plt.show()
+
+def separate_norms(normals, count = 1000, displayNorms = True, displayCones = True):    
+    
+    start_theta = start_phi = 0
+    end_theta = end_phi = 2 * pi
+    multiplier = .1
+    answer = None
+    for i in range(0, 4):
+        xs, ys, zs = rand_sphere(count, start_theta, end_theta,
+                                 start_phi, end_phi)
+    
+        circles = []
+        for i in range(count):
+            x, y, z = xs[i], ys[i], zs[i]
+            circles.append( Sphere(x, y, z, .707) )
+                
+        for circle in circles:
+            for normal in normals:
+                cx = circle.x
+                cy = circle.y
+                cz = circle.z
+                if cx + .707 > normal.x and cx - .707 < normal.x:
+                    if cy + .707 > normal.y and cy - .707 < normal.y:
+                        if cz + .707 > normal.z and cz - .707 < normal.z:
+                            circle.addNormal(normal)
+        circles = sorted(circles, key = lambda x : x.areasum, reverse=False)
+        answer = circles[0]
+        #graph_circles(circles, answer)
+
+        theta, phi = cartesian_to_polar(answer.x, answer.y, answer.z)
+        start_theta = theta - multiplier
+        end_theta = theta + multiplier
+        start_phi = phi + multiplier
+        end_phi = phi - multiplier
+        multiplier *= multiplier
+        
+    print("Answer : ({}, {}, {})\n".format(answer.x, answer.y, answer.z))
+            
+    
+    
+    
+    
