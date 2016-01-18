@@ -55,6 +55,9 @@ class Normal(object):
         
     def __str__(self):
         return "({},{},{}). Area : {}".format(self.x, self.y, self.z, self.area)
+    
+    def __eq__(self, other):
+        return id(self) == id(other)
 
 class PolarNorm(object):
 
