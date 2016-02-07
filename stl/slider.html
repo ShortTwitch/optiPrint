@@ -1,0 +1,56 @@
+<html>
+<style>
+div#myDiv {
+    -ms-transform: rotate(-45deg); /* IE 9 */
+    -webkit-transform: rotate(-45deg); /* Safari */
+    transform: rotate(-45deg); /* Standard syntax */
+}
+div#myDiv2 {
+	-ms-transform: rotate(-135deg); /* IE 9 */
+    -webkit-transform: rotate(-135deg); /* Safari */
+    transform: rotate(-135deg); /* Standard syntax */
+}
+div#myDiv3 {
+	-ms-transform: rotate(-225deg); /* IE 9 */
+    -webkit-transform: rotate(-225deg); /* Safari */
+    transform: rotate(-225deg); /* Standard syntax */
+}
+div#myDiv4 {
+	-ms-transform: rotate(-315deg); /* IE 9 */
+    -webkit-transform: rotate(-315deg); /* Safari */
+    transform: rotate(-315deg); /* Standard syntax */
+}		
+div#box {
+	height:450px;
+    width:400px;
+}
+</style>
+<body>
+<div id="box">
+<div id="myDiv">	
+	<input type="range" min="0" max="100" value="0" step="5" onchange="showValue(this.value)" />
+	<span id="range">0</span>
+</div>
+<div id="myDiv2">	
+	<input type="range" min="0" max="100" value="0" step="5" onchange="showValue(this.value)" />
+	<span id="range2">0</span>
+</div>
+<div id="myDiv3">	
+	<input type="range" min="0" max="100" value="0" step="5" onchange="showValue(this.value)" />
+	<span id="range3">0</span>
+</div>
+<div id="myDiv4">	
+	<input type="range" min="0" max="100" value="0" step="5" onchange="showValue(this.value)" />
+	<span id="range4">0</span>
+</div>
+</div>
+
+
+<script type="text/javascript">
+function showValue(newValue)
+{
+	document.getElementById("range").innerHTML=newValue;
+}
+</script>
+</body>
+</html>
