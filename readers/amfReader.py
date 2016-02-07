@@ -38,18 +38,22 @@ def _parse_faces(root):
                 m = materials[mid]
             f = CF.Face(vertices[v1], vertices[v2], vertices[v3], m)
             faces.append(f)
-    return faces
+    return vertices
+    #return faces
 
 def read_amf(filename):
     faces = None
     normals = None
+    vertices = None
     with open("amf/" + filename) as f:
         try:
             tree = ET.parse(f)
             root = tree.getroot()
-            faces = _parse_faces(root)
-            normals = CF.faces_to_normals(faces)
+            vertices = _parse_faces(root)
+            #faces = _parse_faces(root)
+            #normals = CF.faces_to_normals(faces)
         except ParseError:
             print("Error trying to parse .amf file : amf/{}".format(filename))
             print("Check if file exists and try again")
-    return faces, normals
+    return vertices.values()
+    #return faces, normals

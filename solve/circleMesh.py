@@ -1,7 +1,10 @@
 import normalTree as nt
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
+
 import numpy as np
+from scipy.spatial import ConvexHull
+
 from numpy import random, cos, sin, sqrt, pi
 from math import pi, sin, cos, atan
 
@@ -117,6 +120,41 @@ def separate_norms(normals, count = 5000, displayNorms = True, displayCones = Tr
     ax.plot_wireframe(x, y, z, color = 'b')
     
     plt.show()
+    
+    
+def convexHullTest(vertices):
+    pointsList = []
+    
+    for vertex in vertices:
+        x, y, z = vertex.x, vertex.y, vertex.z
+        xyzList = [x, y, z]
+        pointsList.append(xyzList)
+    
+    pointsList = np.array(pointsList)
+    
+    print ("\n There are {} vertices.\n".format(pointsList.size / 3))
+    
+    cv = ConvexHull(pointsList)
+    
+    hull_points = cv.vertices
+    
+    print(hull_points)
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    for vertex in vertices:
+        ax.scatter(vertex.x, vertex.y, vertex.z, color = 'r')
+    
+    for simplex in cv.simplices:
+        ax.scatter(pointsList[simplex, 0],
+                   pointsList[simplex, 1],
+                   pointsList[simplex, 2], color = 'b' )
+    plt.show()
+    
+    
+    
+    
     
     
     

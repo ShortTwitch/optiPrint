@@ -19,9 +19,11 @@ parser.add_argument("-g","--graph", action="store_true", help = "Graph the norma
 args = parser.parse_args()
 
 if args.amf:
-    faces, normals = AMFReader.read_amf(args.filename)
-    if faces and normals:
-        CM.separate_norms(normals)
+    vertices = AMFReader.read_amf(args.filename)
+    CM.convexHullTest(vertices)
+    #faces, normals = AMFReader.read_amf(args.filename)
+    #if faces and normals:
+    #    CM.separate_norms(normals)
 elif args.stl:
     faces, normals = STLReader.read_stl(args.filename)
     if faces and normals:
