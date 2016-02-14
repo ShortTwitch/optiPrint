@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>App Home Page</title>
+    <script src="/javascripts/angular.min.js"></script>
+    <script src="/javascripts/bootstrap.js"></script>
+    <script src="/javascripts/angularApp.js"></script>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div ng-app = 'myapp'>
+      <div class="row">
+        <div class="col-md-4">
+          <form action="/file_upload" method="POST"
+                enctype="multipart/form-data">
+            <input type="file" name="file" size="50" />
+            <br />
+            <input type="submit" value="Upload File" />
+          </form>
+        </div>
+        <div class="col-md-8">
+          OTHER STUFF
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
