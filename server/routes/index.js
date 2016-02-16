@@ -12,7 +12,7 @@ router.post('/file_upload', function (req, res) {
     console.log("FieldName: " + fieldname);
     console.log("File: " + file);
     console.log("Filename: " + filename);
-    res.end("File Received.");
+    res.end("File Received...");
   });
 });
 
